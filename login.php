@@ -77,7 +77,7 @@
     }
     else
     {
-    	echo('<script> alert("Errore nella query") </script>');
+    	exit('Errore nella query al DB');
     }
 
     header('Location: index.html');
