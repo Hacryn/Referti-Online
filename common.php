@@ -57,6 +57,83 @@ function user_name($id, $rl) {
     return $result;
 }
 
+function patient($patient) {
+    $query = "SELECT Nome, Cognome FROM Paziente WHERE ID = $patient";
+    $result = mysql_fetch_array(query($query));
+    return $result['Nome'] . " " . $result['Cognome'];
+}
+
+function operator($operator) {
+    $query = "SELECT Nome, Cognome FROM Operatore WHERE ID = $operator";
+    $result = mysql_fetch_array(query($query));
+    return $result['Nome'] . " " . $result['Cognome'];
+}
+
+function button($text, $link, $attribute) {
+    return "<a href='$link' class='btn btn-$attribute space'> $text </a>";
+}
+
+function actions($report, $role) {
+    $rid = $report['ID'];
+    $base = "referto?=$rid";
+    $filepath = $report['Filepath'];
+    $result = "<div class='container-fluid'>";
+    $result = $result = $result . button("Visualizza", "$base", "primary");
+
+    if ($role == 'patient') {
+        $result = $result . button("Condividi", "$base&action=share", "warning");
+    }
+
+    if ($role == 'operator' && $_SESSION['UID'] == $report['OID']) {
+        if ($report['Filepath'] != NULL) {
+            $result = $result . button("Carica", "$base&action=upload", "success");
+        }
+        $result = $result . button("Modifica", "$base&action=edit", "warning");
+        $result = $result . button("Elimina", "$base&action=delete", "danger");
+    }
+
+    $result = $result . button("Scarica", $filepath, "secondary");
+    $result = $result . "</div>";
+    return $result;
+}
+
+function reports_query_patient($id) {
+    return "SELECT Referto.* FROM Referto WHERE PID = $id";
+}
+
+function reports_query_operator_owner($id) {
+    return "SELECT Referto.* FROM Referto WHERE Referto.OID = $id";
+}
+
+function reports_query_operator_viewer1($id) {
+    return "SELECT Referto.* FROM Referto
+    INNER JOIN lettura_referto ON lettura_referto.RID = Referto.ID 
+    INNER JOIN Operatore ON lettura_referto.OID = Operatore.ID 
+    AND Operatore.ID = $id";
+}
+
+function reports_query_operator_viewer2($id) {
+    return "SELECT Referto.* FROM Referto
+    INNER JOIN lettura_paziente ON lettura_paziente.PID = Referto.PID 
+    INNER JOIN Operatore ON lettura_paziente.OID = Operatore.ID 
+    AND Operatore.ID = $id";
+}
+
+function reports_query_facility($id) {
+    return "SELECT * FROM Referto
+    INNER JOIN Operatore ON Referto.OID = Operatore.ID
+    INNER JOIN Struttura ON Operatore.FID = Struttura.ID
+    WHERE Struttura.ID = $id";
+}
+
+function facility_from_operator($oid) {
+    $query = "SELECT * FROM Struttura
+    INNER JOIN Operatore ON Struttura.ID = Operatore.FID
+    WHERE Operatore.ID = $oid";
+
+    return mysql_fetch_array(query($query));
+}
+
 function query($query) {
     $s = 'localhost';
 	$u = 'enricociciriello';
@@ -81,7 +158,7 @@ function query($query) {
     if ($risultato) {
         return $risultato;
     } else {
-        exit("Errore: query");
+        exit(mysql_error($risultato));
     }
 
 }
