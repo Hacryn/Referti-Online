@@ -225,7 +225,7 @@ function report_table($report) {
 }
 
 function uploader($rid) {
-    $result = "<table class='table table-borderless'> <form method='post' enctype='multipart/form-data' action='upload.php?=$rid'>";
+    $result = "<table class='table table-borderless'> <form method='post' enctype='multipart/form-data' action='upload.php?rid=$rid'>";
     $result = $result .  "<tr> <td> <input type='file' class='form-control' name='report' id='report'> </td>";
     $result = $result .  "<td> <input type='reset' class='form-control btn btn-secondary' name='submit' value='Pulisci'> </td>";
     $result = $result .  "<td> <input type='submit' class='form-control btn btn-primary' name='submit' value='Carica'> </td> </tr>";
