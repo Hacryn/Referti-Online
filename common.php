@@ -70,30 +70,30 @@ function operator($operator) {
 }
 
 function button($text, $link, $attribute) {
-    return "<a href='$link' class='btn btn-$attribute space'> $text </a>";
+    return "<td> <a href='$link' class='btn btn-$attribute space'> $text </a> </td>";
 }
 
-function actions($report, $role) {
+function actions($report, $role, $upload) {
     $rid = $report['ID'];
-    $base = "referto?=$rid";
+    $base = "referto.php?rid=$rid";
     $filepath = $report['Filepath'];
-    $result = "<div class='container-fluid'>";
-    $result = $result = $result . button("Visualizza", "$base", "primary");
+    $result = "<table class='table table-borderless' style='background-color: transparent'> <tr>";
+    $result = $result = $result . button("Visualizza", "$base&action=look", "primary");
 
     if ($role == 'patient') {
-        $result = $result . button("Condividi", "$base&action=share", "warning");
+        $result = $result . button("Condividi", "$base&action=share", "primary");
     }
 
     if ($role == 'operator' && $_SESSION['UID'] == $report['OID']) {
-        if ($report['Filepath'] == NULL) {
-            $result = $result . button("Carica", "$base&action=upload", "success");
+        if ($report['Filepath'] == NULL or $upload) {
+            $result = $result . button("Carica", "$base&action=upload", "primary");
         }
-        $result = $result . button("Modifica", "$base&action=edit", "warning");
+        $result = $result . button("Modifica", "$base&action=edit", "primary");
         $result = $result . button("Elimina", "$base&action=delete", "danger");
     }
 
     $result = $result . button("Scarica", $filepath, "secondary");
-    $result = $result . "</div>";
+    $result = $result . "</tr> </table>";
     return $result;
 }
 
@@ -132,6 +132,114 @@ function facility_from_operator($oid) {
     WHERE Operatore.ID = $oid";
 
     return mysql_fetch_array(query($query));
+}
+
+function report($id) {
+    if ($id != NULL) {
+        $query = "SELECT * FROM Referto WHERE ID = $id";
+        return mysql_fetch_array(query($query));
+    } else {
+        return NULL;
+    }
+}
+
+function select_operator() {
+    $query = "SELECT Operatore.ID, Nome, Cognome, Denominazione FROM Operatore 
+    INNER JOIN Struttura ON Operatore.FID = Struttura.ID";
+    $result = "<select name='operatore' class='form-control'>";
+    while($row = mysql_fetch_array(query($query))) {
+        $id = $row['ID'];
+        $nome = $row['Nome'];
+        $cognome = $row['Cognome'];
+        $struttura = $row['Denominazione'];
+        $result = $result . "<option value='$id'> $nome $cognome ($struttura) </option>";
+    }
+    return $result . "</select>";
+}
+
+function select_patient($patient) {
+    $query = "SELECT ID, CF, Nome, Cognome FROM Paziente";
+    $result = "<label for='patient'> Seleziona Paziente: </label>
+    <select name='patient' class='form-control'>" ;
+    $set = query($query);
+    while($row = mysql_fetch_array($set)) {
+        $id = $row['ID'];
+        $cf = $row['CF'];
+        $nome = $row['Nome'];
+        $cognome = $row['Cognome'];
+        if ($patient == $id) {
+            $result = $result . "<option selected value='$id'> $nome $cognome ($cf) </option> ";
+        } else {
+            $result = $result . "<option value='$id'> $nome $cognome ($cf) </option> ";
+        }
+    }
+    $result = $result . "</select>";
+    return $result;
+}
+
+function report_form($report) {
+    if ($report == NULL) { 
+        $report['ID'] = NULL;
+        $report['Titolo'] = NULL;
+        $page = "add.php";
+    } else { 
+        $rid = $report['ID'];
+        $page = "edit.php?rid=$rid";
+    }
+
+    $titolo = $report['Titolo'];
+    
+    $result = "<form method='POST' action='$page'>";
+    $result = $result . select_patient($report['ID']) . "<br>";
+    $result = $result . "<label for='titolo'> Titolo Esame: </label> 
+    <input type='text' name='titolo' class='form-control' value=$titolo>" . "<br>";
+    $result = $result . "<button type='submit' class='btn btn-primary'>Conferma</button>";
+    $result = $result . "</form>";
+    return $result;
+}
+
+function report_table($report) {
+    $titolo = $report['Titolo'];
+    $paziente = patient($report['PID']);
+    $operatore = operator($report['OID']);
+    $creazione = $report['Creazione'];
+    $caricamento = $report['Caricamento'];
+    $struttura = facility_from_operator($report['OID']);
+    $struttura = $struttura['Denominazione'];
+    if ($report['Filepath']) {
+        $file = "✔️";
+    } else {
+        $file = "❌";
+    }
+    
+    $result = "<table class='table table-borderless'>";
+    $result = $result . "<tr> <td> <b> Titolo Esame: </b> </td> <td> $titolo </td> </tr>";
+    $result = $result . "<tr> <td> <b> Paziente: </b> </td> <td>  $paziente </td> </tr>";
+    $result = $result . "<tr> <td> <b> Operatore: </b> </td> <td> $operatore </td> </tr>";
+    $result = $result . "<tr> <td> <b> Struttura: </b> </td> <td> $struttura </td> </tr>";
+    $result = $result . "<tr> <td> <b> Data Esame: </b> </td> <td> $creazione </td> </tr>";
+    $result = $result . "<tr> <td> <b> Data Referto: </b> </td> <td> $caricamento </td> </tr>";
+    $result = $result . "<tr> <td> <b> Referto precedentemente caricato? </b> </td> <td> $file </td> </tr>";
+    $result = $result . "</table>";
+    return $result;
+}
+
+function uploader($rid) {
+    $result = "<table class='table table-borderless'> <form method='post' enctype='multipart/form-data' action='upload.php?=$rid'>";
+    $result = $result .  "<tr> <td> <input type='file' class='form-control' name='report' id='report'> </td>";
+    $result = $result .  "<td> <input type='reset' class='form-control btn btn-secondary' name='submit' value='Pulisci'> </td>";
+    $result = $result .  "<td> <input type='submit' class='form-control btn btn-primary' name='submit' value='Carica'> </td> </tr>";
+    $result = $result . "</form> </table>";
+    return $result;
+}
+
+function deleter($rid) {
+    $link = "delete.php?rid=$rid";
+    $result = "<table class='table table-borderless'>";
+    $result = $result .  "<tr> <td> <b> Sei sicuro di voler eliminare il report? </b> </td>";
+    $result = $result .  "<td> <a href=$link class='btn btn-danger'> Elimina </a> </tr>";
+    $result = $result . "</table>";
+    return $result;
 }
 
 function query($query) {

@@ -27,7 +27,7 @@
             $operator = operator($row['OID']);
             $struttura = facility_from_operator($row['OID']);
             $struttura = $struttura['Denominazione'];
-            $actions = actions($row, $rl);
+            $actions = actions($row, $rl, FALSE);
 
             echo("<tr>");
             echo("<td>$paziente</td>");
@@ -41,7 +41,7 @@
         }
     }
     
-    function report($id, $rl) {
+    function reports($id, $rl) {
 
         if ($rl == 'patient')
         {
@@ -78,10 +78,17 @@
     <title>Referti Online</title>
 	
 	<style>
+        .table-borderless > tbody > tr > td,
+        .table-borderless > tbody > tr > th,
+        .table-borderless > tfoot > tr > td,
+        .table-borderless > tfoot > tr > th,
+        .table-borderless > thead > tr > td,
+        .table-borderless > thead > tr > th {
+            border: none;
+        }
 		body{background-color: #212529; color: white}
         form{margin:50px}
         .display-1{color: white; text-align: center;}
-        .space {margin: 1px;}
 	</style>
 </head>
 <body>
@@ -102,7 +109,7 @@
     <br>
     <div class="row justify-content-center">
     <div class="col-auto">
-    <table class="table table-dark table-responsive">
+    <table class="table table-dark">
         <tr>
             <th scope="col">Paziente</th>    
             <th scope="col">Titolo</th>
@@ -113,7 +120,7 @@
             <th scope="col">Azioni</th>
         </tr>
         <?php
-        echo(report($id, $rl));
+        echo(reports($id, $rl));
         ?>
     </table>
     </div>
