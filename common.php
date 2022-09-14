@@ -192,7 +192,7 @@ function report_form($report) {
     $result = "<form method='POST' action='$page'>";
     $result = $result . select_patient($report['ID']) . "<br>";
     $result = $result . "<label for='titolo'> Titolo Esame: </label> 
-    <input type='text' name='titolo' class='form-control' value=$titolo>" . "<br>";
+    <input type='text' name='titolo' class='form-control' value='$titolo'>" . "<br>";
     $result = $result . "<button type='submit' class='btn btn-primary'>Conferma</button>";
     $result = $result . "</form>";
     return $result;
