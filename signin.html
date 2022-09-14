@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" type="text/css" href="css/style.css" />
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+	
+	<style>
+		h1 { color: grey}
+		body {background-color: grey;}
+		input {color:grey}
+		select {
+			color:grey; 
+			background-color: #111;
+			border: 0px
+		}
+        .hide {
+            display: none;
+        }
+	</style>
+	
+    <title>Referti Online</title>
+  </head>
+
+  <script>
+    function display() {
+        var element = document.getElementById('role')
+        var role = element.value
+        if (role == 'facility') {
+            document.getElementById('cognomebox').style.display = 'none'
+            document.getElementById('cognomelbl').style.display = 'none'
+            document.getElementById('cognome').style.display = 'none'
+            document.getElementById('nomelbl').innerHTML  = "Denominazione"
+        } else {
+            document.getElementById('cognomebox').style.display = 'block'
+            document.getElementById('cognomelbl').style.display = 'block'
+            document.getElementById('cognome').style.display = 'block'
+            document.getElementById('nomelbl').innerHTML  = "Nome"
+        }
+    }
+
+    function validate() {
+        var role = document.getElementById('role').value
+        var codice_fiscale = document.getElementById('cf').value
+        if (codice_fiscale.length != 16 && role == 'patient') { 
+            alert("Codice fiscale inserito non valido, devono essere 16 caratteri")
+            return false
+        }
+        if (codice_fiscale.length != 11 && role == 'facility') { 
+            alert("Codice fiscale inserito non valido, devono essere 11 caratteri")
+            return false
+        }
+
+        var password = document.getElementById('password').value
+        var ripassword = document.getElementById('ripassword').value
+        if (password != ripassword) {
+            alert("La password inserite non è la stessa di quella nel campo conferma")
+            return false
+        }
+
+        return true
+    }
+  </script>
+  
+  <body>
+	
+	<div class="d-flex">
+	<form method="POST" action="signin.php" onsubmit="return validate()">
+	  <h1>Accesso Utente</h1>
+	  <div class="inset">
+      <p>
+		<label for="nome" id="nomelbl">Nome</label>
+		<input type="text" name="nome" id="nome" required>
+	  </p>
+      <p id="cognomebox">
+		<label for="cognome" id="cognomelbl">Cognome</label>
+		<input type="text" name="cognome" id="cognome">
+	  </p>
+	  <p>
+		<label for="cf">Codice Fiscale</label>
+		<input type="text" name="cf" id="cf" required>
+	  </p>
+	  <p>
+		<label for="password">Password</label>
+		<input type="password" name="password" id="password" required>
+	  </p>
+      <p>
+		<label for="ripassword">Ripeti password</label>
+		<input type="password" name="ripassword" id="ripassword" required>
+	  </p>
+	  <p>
+		<label for="role">Ruolo: </label>
+		<select name="role" id="role" onchange="display()">
+			<option value="patient">Paziente</option>
+			<option value="facility">Struttura sanitaria</option>
+		</select>
+	  </p>
+	  <p class="p-container">
+		<span id="infobox">Realizzato da Enrico <br> per l'UNIBA</span> <br>
+		<input type="submit" name="go" id="go" value="Registrati">
+	  </p>
+	</form>
+
+	<script>
+        var url = new URL(window.location.href)
+		var login = url.searchParams.get("msg")
+		if (login == "exist") {
+			infobox = document.getElementById('infobox')
+			infobox.innerHTML = 'Utente già registrato! <br> Torna indietro'
+		}
+	</script>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+  </body>
+</html>
