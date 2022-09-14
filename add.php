@@ -29,7 +29,7 @@
         $codice = generateRandomString(12);
         query("INSERT INTO Referto VALUES (NULL, $id, $paziente, '$cf','$titolo', '', current_timestamp(), null, '$codice')");
     } else {
-        query("INSERT INTO Referto VALUES (NULL, $id, $paziente, '$cf','$titolo', '', current_timestamp(), null)");
+        query("INSERT INTO Referto VALUES (NULL, $id, $paziente, '$cf','$titolo', '', current_timestamp(), null, NULL)");
     }
 
     $report = mysql_fetch_array(query("SELECT ID FROM Referto WHERE OID = $id AND PID = $paziente AND Titolo = '$titolo' ORDER BY ID DESC, Creazione DESC LIMIT 1"));
