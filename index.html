@@ -23,8 +23,9 @@
   
   <body>
 	
+	<div class="d-flex">
 	<form method="POST" action="login.php">
-	  <h1>Accesso</h1>
+	  <h1>Accesso Utente</h1>
 	  <div class="inset">
 	  <p>
 		<label for="cf">Codice Fiscale</label>
@@ -43,11 +44,43 @@
 		</select>
 	  </p>
 	  </div>
+	  <br>
 	  <p class="p-container">
 		<span id="infobox">Realizzato da Enrico <br> per l'UNIBA</span> <br>
 		<input type="submit" name="go" id="go" value="Accedi">
 	  </p>
 	</form>
+
+	<form method="POST" action="referto.php?action=look">
+		<h1>Accesso Diretto</h1>
+		<div class="inset">
+		<p>
+		  <label for="rid">Codice Referto</label>
+		  <input type="text" name="rid" id="rid">
+		</p>
+		<p>
+		  <label for="codice">Codice Accesso</label>
+		  <input type="text" name="codice" id="codice">
+		</p>
+		</div>
+		<p class="p-container">
+		  <span id="directbox"> Codici ricevuti <br> dall'operatore </span> <br>
+		  <input type="submit" name="go" id="go" value="Visualizza">
+		</p>
+		<p class="p-container">
+			<span id="regbox">Vuoi accedere a <br> tutti i tuoi referti? </span> <br>
+			<a class="btn-primary" href="signin.html"><b>Registrati</b></a>
+		</p>
+	</form>
+	</div>
+
+	<!--<form method="POST" action="signin.html">
+		<h1>Registrazione</h1>
+		<p class="p-container">
+			<span id="regbox"> Vuoi registrarti? <br> Prosegui qui! </span> <br>
+			<input type="submit" name="go" id="go" value="Registrati">
+		  </p>
+	</form>-->
 
 	<script>
 		var url = new URL(window.location.href)
@@ -59,6 +92,10 @@
 		if (login == "none") {
 			infobox = document.getElementById('infobox')
 			infobox.innerHTML = 'Devi effettuare <br> il login per accedere'
+		}
+		if (login == "wrong") {
+			infobox = document.getElementById('directbox')
+			infobox.innerHTML = 'Referto non trovato <br> o codice errato'
 		}
 	</script>
 

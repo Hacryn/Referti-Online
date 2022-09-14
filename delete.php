@@ -17,6 +17,7 @@
         die();
     }
 
+    $rid = @$_GET['rid'];
     $report = report(@$_GET['rid']);
 
     if(!has_access($report, $id, $rl)) {

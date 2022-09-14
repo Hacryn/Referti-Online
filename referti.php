@@ -20,7 +20,11 @@
 <?php
     function report_rows($result, $rl) {
         while ($row = mysql_fetch_array($result)) {
-            $paziente = patient($row['PID']);
+            if ($row['PID'] == 0) {
+                $paziente = $row['CF'];
+            } else {
+                $paziente = patient($row['PID']);
+            }
             $titolo = $row['Titolo'];
             $creazione = $row['Creazione'];
             $caricamento = $row['Caricamento'];

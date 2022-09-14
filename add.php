@@ -16,10 +16,22 @@
         die();
     }
 
-    $paziente = $_POST['patient'];
+    $cf = $_POST['patient'];
+    $paziente = get_id_patient_from_cf($cf);
     $titolo = $_POST['titolo'];
 
-    query("INSERT INTO Referto VALUES (NULL, $id, $paziente, '$titolo', '', current_timestamp(), null)");
+    if ($paziente == -1) {
+        header('Location: referto.php?action=new&result=nocf');
+        die();
+    }
+
+    if ($paziente == 0) {
+        $codice = generateRandomString(12);
+        query("INSERT INTO Referto VALUES (NULL, $id, $paziente, '$cf','$titolo', '', current_timestamp(), null, '$codice')");
+    } else {
+        query("INSERT INTO Referto VALUES (NULL, $id, $paziente, '$cf','$titolo', '', current_timestamp(), null)");
+    }
+
     $report = mysql_fetch_array(query("SELECT ID FROM Referto WHERE OID = $id AND PID = $paziente AND Titolo = '$titolo' ORDER BY ID DESC, Creazione DESC LIMIT 1"));
     $rid = $report['ID'];
 

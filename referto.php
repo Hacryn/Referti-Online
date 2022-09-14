@@ -6,13 +6,8 @@
     session_start();
     include_once("common.php");
 
-    $id = $_SESSION['UID'];
-    $rl = $_SESSION['role'];
-
-    if ($rl == "") {
-        header('Location: index.html?login=none');
-        die();
-    }
+    $id = @$_SESSION['UID'];
+    $rl = @$_SESSION['role'];
 
     if ($_GET['action'] == NULL) {
         $rid = $_GET['rid'];
@@ -22,9 +17,21 @@
 
     $report = report(@$_GET['rid']);
 
-    if(!has_access($report, $id, $rl)) {
-        header('Location: home.php');
-        die();
+    if (@$_POST['rid'] and @$_POST['codice']) {
+        $report = report($_POST['rid']);
+        $logged = False;
+        if (@$report['Codice'] != $_POST['codice'] or !$report) {
+            header('Location: index.html?login=wrong');
+        }
+    } else {
+        if ($rl == "") {
+            header('Location: index.html?login=none');
+            die();
+        }
+        if(!has_access($report, $id, $rl) and $_GET['action']!='new') {
+            header('Location: home.php');
+            die();
+        }
     }
 
 ?>
@@ -103,6 +110,9 @@
             }
             if (@$_GET['result'] == 'failed') {
                 echo "Caricamento file fallito, riprova più tardi";
+            }
+            if (@$_GET['result'] == 'nocf') {
+                echo "Il codice fiscale inserito non è valido";
             }
         ?>
     </div>

@@ -3,9 +3,10 @@
 include_once("sql_driver.php");
 
 function nav_menu($role) {
+    $menu = "";
 
     if ($role == 'patient') {
-        $menu = '<li class="nav-item">';
+        $menu = $menu . '<li class="nav-item">';
         $menu = $menu . '<a class="nav-link active" href="referti.php">Referti</a>';
         $menu = $menu . '</li> <li class="nav-item">';
         $menu = $menu . '<a class="nav-link active" href="sharer.php">Condividi tutti i reports</a>';
@@ -13,7 +14,7 @@ function nav_menu($role) {
     }
 
     if ($role == 'operator') {
-        $menu = '<li class="nav-item dropdown">';
+        $menu = $menu . '<li class="nav-item dropdown">';
         $menu = $menu . '<a class="nav-link dropdown-toggle" href="home.php" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Referti</a>';
         $menu = $menu . '<div class="dropdown-menu" aria-labelledby="navbarDropdown">';
         $menu = $menu . '<a class="dropdown-item" href="referto.php?action=new">Crea nuovo referto</a>';
@@ -22,7 +23,7 @@ function nav_menu($role) {
     }
 
     if ($role == 'facility') {
-        $menu = '<li class="nav-item dropdown">';
+        $menu = $menu . '<li class="nav-item dropdown">';
         $menu = $menu . '<a class="nav-link active" href="referti.php">Referti</a>';
         $menu = $menu . '</li>';
         $menu = $menu . '<li class="nav-item dropdown">';
@@ -187,6 +188,7 @@ function select_patient($patient) {
     $query = "SELECT ID, CF, Nome, Cognome FROM Paziente";
     $result = "<label for='patient'> Seleziona Paziente: </label>
     <select name='patient' class='form-control'>" ;
+    //$result = $result . "<option value='0'> Non registrato </option>";
     $set = query($query);
     while($row = mysql_fetch_array($set)) {
         $id = $row['ID'];
@@ -203,30 +205,46 @@ function select_patient($patient) {
     return $result;
 }
 
+function get_id_patient_from_cf($cf) {
+    if (strlen($cf) != 16) {return -1;}
+    $query = "SELECT * FROM Paziente WHERE CF = '$cf'";
+    $patient = mysql_fetch_array(query($query));
+    if ($patient) {return $patient['ID'];}
+    else {return 0;}
+}
+
 function report_form($report) {
     if ($report == NULL) { 
         $report['ID'] = NULL;
         $report['Titolo'] = NULL;
+        $report['CF'] = NULL;
         $page = "add.php";
     } else { 
         $rid = $report['ID'];
         $page = "edit.php?rid=$rid";
     }
 
+    $cf = $report['CF'];
     $titolo = $report['Titolo'];
     
     $result = "<form method='POST' action='$page'>";
-    $result = $result . select_patient($report['ID']) . "<br>";
+    $result = $result . "<label for='patient'> Codice Fiscale Paziente: </label>
+    <input class='form-control' type='text' name='patient' id='patient' value='$cf' required><br>";
     $result = $result . "<label for='titolo'> Titolo Esame: </label> 
-    <input type='text' name='titolo' class='form-control' value='$titolo'>" . "<br>";
+    <input type='text' name='titolo' class='form-control' value='$titolo' required>" . "<br>";
     $result = $result . "<button type='submit' class='btn btn-primary'>Conferma</button>";
     $result = $result . "</form>";
     return $result;
 }
 
 function report_table($report) {
+    $rid = $report['ID'];
     $titolo = $report['Titolo'];
-    $paziente = patient($report['PID']);
+    if ($report['PID'] == 0) {
+        $paziente = $report['CF'];
+    } else {
+        $paziente = patient($report['PID']);
+    }
     $operatore = operator($report['OID']);
     $creazione = $report['Creazione'];
     $caricamento = $report['Caricamento'];
@@ -237,8 +255,13 @@ function report_table($report) {
     } else {
         $file = "❌";
     }
+    $codice = $report['Codice'];
     
     $result = "<table class='table table-borderless'>";
+    if ($codice) {
+        $result = $result . "<tr> <td> <b> Codice Referto: </b> </td> <td> $rid </td> </tr>";
+        $result = $result . "<tr> <td> <b> Codice Accesso: </b> </td> <td> $codice </td> </tr>"; 
+    }
     $result = $result . "<tr> <td> <b> Titolo Esame: </b> </td> <td> $titolo </td> </tr>";
     $result = $result . "<tr> <td> <b> Paziente: </b> </td> <td>  $paziente </td> </tr>";
     $result = $result . "<tr> <td> <b> Operatore: </b> </td> <td> $operatore </td> </tr>";
@@ -316,6 +339,17 @@ function has_access($report, $uid, $role) {
         return $facility['ID'] == $uid;
     }
 }
+
+function generateRandomString($length = 10) {
+    $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    $charactersLength = strlen($characters);
+    $randomString = '';
+    for ($i = 0; $i < $length; $i++) {
+        $randomString .= $characters[rand(0, $charactersLength - 1)];
+    }
+    return $randomString;
+}
+
 
 function query($query) {
     $s = 'localhost';
