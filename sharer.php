@@ -14,7 +14,7 @@
         die();
     }
 
-    if ($rl != 'operator') {
+    if ($rl == 'operator') {
         header('Location: home.php');
         die();
     }
