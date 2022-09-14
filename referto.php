@@ -14,11 +14,6 @@
         die();
     }
 
-    if ($rl != 'operator') {
-        header('Location: home.php');
-        die();
-    }
-
     if ($_GET['action'] == NULL) {
         $rid = $_GET['rid'];
         header("Location: referto.php?rid=$rid&action=look");

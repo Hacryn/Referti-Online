@@ -122,7 +122,7 @@ function reports_query_operator_viewer2($id) {
 }
 
 function reports_query_facility($id) {
-    return "SELECT * FROM Referto
+    return "SELECT Referto.* FROM Referto
     INNER JOIN Operatore ON Referto.OID = Operatore.ID
     INNER JOIN Struttura ON Operatore.FID = Struttura.ID
     WHERE Struttura.ID = $id";
@@ -286,15 +286,18 @@ function sharer($oid, $rid, $type) {
 }
 
 function has_access($report, $uid, $role) {
+    
     if (!$report) {return false;}
+
+    $rid = $report['ID'];
+    $oid = $report['OID'];
+    $pid = $report['PID'];
+
     if ($role == 'patient') {
         return $report['PID'] == $uid;
     }
+
     if ($role == 'operator') {
-        $rid = $report['ID'];
-        $oid = $report['OID'];
-        $pid = $report['PID'];
-        
         $check = mysql_fetch_array(query("SELECT * FROM lettura_referto 
         WHERE lettura_referto.RID = $rid AND lettura_referto.OID = $uid"));
 
@@ -306,6 +309,11 @@ function has_access($report, $uid, $role) {
         if ($check) { return true; }
         
         return $oid == $uid;
+    }
+
+    if ($role == 'facility') {
+        $facility = facility_from_operator($oid);
+        return $facility['ID'] == $uid;
     }
 }
 
