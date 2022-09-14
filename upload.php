@@ -26,7 +26,14 @@
         mkdir("files/$pid/");
     }
 
-    if ($ext != 'pdf' and  $ext != 'zip' and $ext != 'rar' $ext != '7zip' and $ext != 'jpeg' and $ext != 'jpg' and $ext != 'png' and $ext != 'gif') {
+    if ($ext != 'pdf' and  
+        $ext != 'zip' and 
+        $ext != 'rar' and 
+        $ext != '7zip' and 
+        $ext != 'jpeg' and 
+        $ext != 'jpg' and 
+        $ext != 'png' and 
+        $ext != 'gif') {
         header("Location: referto.php?rid=$rid&action=look&result=wrong_ext");
         die();
     }

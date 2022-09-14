@@ -24,6 +24,11 @@
             $titolo = $row['Titolo'];
             $creazione = $row['Creazione'];
             $caricamento = $row['Caricamento'];
+            if($caricamento) {
+                $caricamento = "✔️";
+            } else {
+                $caricamento = "❌";
+            }
             $operator = operator($row['OID']);
             $struttura = facility_from_operator($row['OID']);
             $struttura = $struttura['Denominazione'];
@@ -33,7 +38,7 @@
             echo("<td>$paziente</td>");
             echo("<td>$titolo</td>");
             echo("<td>$creazione</td>");
-            //echo("<td>$caricamento</td>");
+            echo("<td>$caricamento</td>");
             //echo("<td>$operator</td>");
             echo("<td>$struttura</td>");
             echo("<td>$actions</td>");
@@ -114,8 +119,8 @@
             <th scope="col">Paziente</th>    
             <th scope="col">Titolo</th>
             <th scope="col">Data esame</th>
-            <!--<th scope="col">Data referto</th>
-            <th scope="col">Operatore</th>-->
+            <th scope="col">Scaricabile</th>
+             <!--<th scope="col">Operatore</th>-->
             <th scope="col">Struttura</th>
             <th scope="col">Azioni</th>
         </tr>
