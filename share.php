@@ -11,6 +11,11 @@
         die();
     }
 
+    if ($rl != 'patient') {
+        header('Location: home.php');
+        die();
+    }
+
     if (!$_POST['operatore']) {
         header('Location: home.php');
         die();
@@ -25,9 +30,18 @@
     if ($_GET['rid']) {
         $value = $_GET['rid'];
         $table = 'lettura_referto';
+
+        $report = report(@$_GET['rid']);
+
+        if(!has_access($report, $id, $rl)) {
+            header('Location: home.php');
+            die();
+        }
+
     } else {
         $value = $id;
         $table = 'lettura_paziente';
+        
         query("DELETE FROM lettura_referto WHERE OID = $operatore");
     }
 

@@ -12,7 +12,17 @@
         die();
     }
 
-    $rid = $_GET['rid'];
+    if ($rl != 'operator') {
+        header('Location: home.php');
+        die();
+    }
+
+    $report = report(@$_GET['rid']);
+
+    if(!has_access($report, $id, $rl)) {
+        header('Location: home.php');
+        die();
+    }
 
     $file = mysql_fetch_array(query("SELECT ID, Filepath FROM Referto WHERE ID = $rid"));
 

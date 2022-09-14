@@ -14,6 +14,11 @@
         die();
     }
 
+    if ($rl != 'operator') {
+        header('Location: home.php');
+        die();
+    }
+
     $report = report(@$_GET['rid']);
 
     if(!$report) {

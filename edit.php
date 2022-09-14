@@ -11,10 +11,22 @@
         die();
     }
 
+    if ($rl != 'operator') {
+        header('Location: home.php');
+        die();
+    }
+
     $paziente = $_POST['patient'];
     $titolo = $_POST['titolo'];
 
     $rid = $_GET['rid'];
+
+    $report = report(@$_GET['rid']);
+
+    if(!has_access($report, $id, $rl)) {
+        header('Location: home.php');
+        die();
+    }
 
     query("UPDATE Referto SET PID = $paziente, Titolo = '$titolo' WHERE ID = $rid");
 

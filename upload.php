@@ -7,12 +7,24 @@
     $id = $_SESSION['UID'];
     $rl = $_SESSION['role'];
 
-    if ($rl == "" or !$_GET['rid']) {
+    if ($rl == "") {
         header('Location: index.html?login=none');
         die();
     }
 
-    $rid = $_GET['rid'];
+    if ($rl != 'operator') {
+        header('Location: home.php');
+        die();
+    }
+
+    $rid = @$_GET['rid'];
+
+    $report = report(@$_GET['rid']);
+
+    if(!has_access($report, $id, $rl)) {
+        header('Location: home.php');
+        die();
+    }
 
     $pid = mysql_fetch_array(query("SELECT PID FROM Referto WHERE ID = $rid"));
     $pid = $pid['PID'];

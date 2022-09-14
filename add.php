@@ -11,6 +11,11 @@
         die();
     }
 
+    if ($rl != 'operator') {
+        header('Location: home.php');
+        die();
+    }
+
     $paziente = $_POST['patient'];
     $titolo = $_POST['titolo'];
 

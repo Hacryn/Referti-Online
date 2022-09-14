@@ -285,6 +285,30 @@ function sharer($oid, $rid, $type) {
     return $result;
 }
 
+function has_access($report, $uid, $role) {
+    if (!$report) {return false;}
+    if ($role == 'patient') {
+        return $report['PID'] == $uid;
+    }
+    if ($role == 'operator') {
+        $rid = $report['ID'];
+        $oid = $report['OID'];
+        $pid = $report['PID'];
+        
+        $check = mysql_fetch_array(query("SELECT * FROM lettura_referto 
+        WHERE lettura_referto.RID = $rid AND lettura_referto.OID = $uid"));
+
+        if ($check) { return true; }
+
+        $check = mysql_fetch_array(query("SELECT * FROM lettura_paziente 
+        WHERE lettura_paziente.PID = $pid AND lettura_paziente.OID = $uid"));
+
+        if ($check) { return true; }
+        
+        return $oid == $uid;
+    }
+}
+
 function query($query) {
     $s = 'localhost';
 	$u = 'enricociciriello';
