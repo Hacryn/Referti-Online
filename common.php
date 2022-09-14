@@ -7,6 +7,8 @@ function nav_menu($role) {
     if ($role == 'patient') {
         $menu = '<li class="nav-item">';
         $menu = $menu . '<a class="nav-link active" href="referti.php">Referti</a>';
+        $menu = $menu . '</li> <li class="nav-item">';
+        $menu = $menu . '<a class="nav-link active" href="sharer.php">Condividi tutti i reports</a>';
         $menu = $menu . '</li>';
     }
 
@@ -107,15 +109,15 @@ function reports_query_operator_owner($id) {
 
 function reports_query_operator_viewer1($id) {
     return "SELECT Referto.* FROM Referto
-    INNER JOIN lettura_referto ON lettura_referto.RID = Referto.ID 
-    INNER JOIN Operatore ON lettura_referto.OID = Operatore.ID 
+    INNER JOIN lettura_paziente ON lettura_paziente.PID = Referto.PID 
+    INNER JOIN Operatore ON lettura_paziente.OID = Operatore.ID 
     AND Operatore.ID = $id";
 }
 
 function reports_query_operator_viewer2($id) {
     return "SELECT Referto.* FROM Referto
-    INNER JOIN lettura_paziente ON lettura_paziente.PID = Referto.PID 
-    INNER JOIN Operatore ON lettura_paziente.OID = Operatore.ID 
+    INNER JOIN lettura_referto ON lettura_referto.RID = Referto.ID 
+    INNER JOIN Operatore ON lettura_referto.OID = Operatore.ID 
     AND Operatore.ID = $id";
 }
 
@@ -143,11 +145,35 @@ function report($id) {
     }
 }
 
-function select_operator() {
-    $query = "SELECT Operatore.ID, Nome, Cognome, Denominazione FROM Operatore 
-    INNER JOIN Struttura ON Operatore.FID = Struttura.ID";
+function select_operator($oid, $rid, $type) {
+    $pid = $_SESSION['UID'];
+    $exclude = "$oid";
+
+    if ($type == 'report') {
+        $exclude_query = query("SELECT Operatore.ID FROM Operatore 
+        INNER JOIN lettura_referto ON Operatore.ID = lettura_referto.OID
+        AND lettura_referto.RID = $rid");
+        while($result = mysql_fetch_array($exclude_query)) {
+            $id = $result['ID'];
+            $exclude = $exclude . ", $id";
+        }
+    }
+
+    $exclude_query = query("SELECT Operatore.ID FROM Operatore 
+    INNER JOIN lettura_paziente ON Operatore.ID = lettura_paziente.OID
+    AND lettura_paziente.PID = $pid");
+    while($result = mysql_fetch_array($exclude_query)) {
+        $id = $result['ID'];
+        $exclude = $exclude . ", $id";
+    }
+
+    $query = "SELECT Operatore.ID, Nome, Cognome, Denominazione FROM Operatore
+    INNER JOIN Struttura ON Operatore.FID = Struttura.ID
+    WHERE Operatore.ID NOT IN ($exclude)";
     $result = "<select name='operatore' class='form-control'>";
-    while($row = mysql_fetch_array(query($query))) {
+    $result = $result . "<option value='-1'> </option>";
+    $set = query($query);
+    while($row = mysql_fetch_array($set)) {
         $id = $row['ID'];
         $nome = $row['Nome'];
         $cognome = $row['Cognome'];
@@ -239,6 +265,23 @@ function deleter($rid) {
     $result = $result .  "<tr> <td> <b> Sei sicuro di voler eliminare il report? </b> </td>";
     $result = $result .  "<td> <a href=$link class='btn btn-danger'> Elimina </a> </tr>";
     $result = $result . "</table>";
+    return $result;
+}
+
+function sharer($oid, $rid, $type) {
+    if ($type == 'report') {
+        $link = "share.php?rid=$rid";
+    } elseif ($type == 'patient') {
+        $link = "share.php?";
+    } else {
+        return "";
+    }
+    $operatori = select_operator($oid, $rid, $type);
+    $result = "<table class='table table-borderless'> <form method='post' enctype='multipart/form-data' action='$link'>";
+    $result = $result .  "<tr> <td> Seleziona operatore: </td>";
+    $result = $result .  "<td> $operatori </td>";
+    $result = $result .  "<td> <input type='submit' class='form-control btn btn-primary' name='submit' value='Condividi'> </td> </tr>";
+    $result = $result . "</form> </table>";
     return $result;
 }
 
