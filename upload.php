@@ -26,7 +26,17 @@
         mkdir("files/$pid/");
     }
 
-    move_uploaded_file($_FILES['report']['tmp_name'], $target);
+    if ($ext != 'pdf' and  $ext != 'zip' and $ext != 'rar' $ext != '7zip') {
+        header("Location: referto.php?rid=$rid&action=look&result=wrong_ext");
+        die();
+    }
+
+    $check = move_uploaded_file($_FILES['report']['tmp_name'], $target);
+
+    if (!$check) {
+        header("Location: referto.php?rid=$rid&action=look&result=failed");
+        die();
+    }
 
     query("UPDATE Referto SET Caricamento = current_timestamp() WHERE ID = $rid");
     query("UPDATE Referto SET Filepath = '$target' WHERE ID = $rid");
