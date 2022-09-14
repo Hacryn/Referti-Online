@@ -90,7 +90,8 @@
     <div id="InfoBox" class="h-flex container">
         <?php 
             if (@$_GET['result'] == 'wrong_ext') {
-                echo "Estensione file non valida per il caricamento";
+                echo "Estensione file non valida per il caricamento. <br>";
+                echo "Il file per essere valido può essere un PDF, una immagine o un archivio.";
             }
             if (@$_GET['result'] == 'failed') {
                 echo "Caricamento file fallito, riprova più tardi";
