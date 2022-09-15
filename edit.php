@@ -16,7 +16,6 @@
         die();
     }
 
-    $paziente = $_POST['patient'];
     $titolo = $_POST['titolo'];
 
     $rid = $_GET['rid'];
@@ -28,7 +27,7 @@
         die();
     }
 
-    query("UPDATE Referto SET PID = $paziente, Titolo = '$titolo' WHERE ID = $rid");
+    query("UPDATE Referto SET Titolo = '$titolo' WHERE ID = $rid");
 
     header("Location: referto.php?rid=$rid&action=look");
     

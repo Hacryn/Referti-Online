@@ -213,7 +213,7 @@ function get_id_patient_from_cf($cf) {
     else {return 0;}
 }
 
-function report_form($report) {
+function report_form($report, $required) {
     if ($report == NULL) { 
         $report['ID'] = NULL;
         $report['Titolo'] = NULL;
@@ -228,8 +228,10 @@ function report_form($report) {
     $titolo = $report['Titolo'];
     
     $result = "<form method='POST' action='$page'>";
-    $result = $result . "<label for='patient'> Codice Fiscale Paziente: </label>
-    <input class='form-control' type='text' name='patient' id='patient' value='$cf' required><br>";
+    if($required == 'required') {
+        $result = $result . "<label for='patient'> Codice Fiscale Paziente: </label>
+        <input class='form-control' type='text' name='patient' id='patient' value='$cf' $required><br>";
+    }
     $result = $result . "<label for='titolo'> Titolo Esame: </label> 
     <input type='text' name='titolo' class='form-control' value='$titolo' required>" . "<br>";
     $result = $result . "<button type='submit' class='btn btn-primary'>Conferma</button>";

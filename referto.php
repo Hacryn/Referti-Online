@@ -78,10 +78,10 @@
     <div id="ReportBox" class="h-flex container">
     <?php
         if ($_GET['action'] == 'new') {
-            echo(report_form($report));
+            echo(report_form($report, "required"));
         }
         elseif ($_GET['action'] == 'edit') {
-            echo(report_form($report));
+            echo(report_form($report, ""));
             echo(actions($report, $rl, TRUE));
         }
         else {
