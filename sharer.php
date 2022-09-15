@@ -58,6 +58,7 @@
         </ul>
     </nav>
     <div class="h-flex container">
+    <h1>Condivisione di tutti i referti con un operatore</h1>
     <?php
         echo(sharer($report['OID'], $id, 'patient'));
     ?>
