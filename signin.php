@@ -27,6 +27,12 @@
         $query = "INSERT INTO Paziente
         VALUES (Null, '$cf', '$pw', '$nome', '$cognome')";
         query($query);
+        $query = "SELECT ID FROM Paziente WHERE CF='$cf'";
+        $pid = mysql_fetch_array(query($query));
+        $pid = $pid['ID'];
+        $query = "UPDATE Referto SET PID = $pid, Codice=NULL
+        WHERE CF = '$cf'";
+        query($query);
     } elseif ($role == 'facility') {
         $query = "SELECT * FROM Struttura
         WHERE CF='$cf'";
