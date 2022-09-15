@@ -9,7 +9,7 @@ function nav_menu($role) {
         $menu = $menu . '<li class="nav-item">';
         $menu = $menu . '<a class="nav-link active" href="referti.php">Referti</a>';
         $menu = $menu . '</li> <li class="nav-item">';
-        $menu = $menu . '<a class="nav-link active" href="sharer.php">Condividi tutti i reports</a>';
+        $menu = $menu . '<a class="nav-link active" href="sharer.php">Gestione Condivisione</a>';
         $menu = $menu . '</li>';
     }
 
@@ -84,7 +84,7 @@ function actions($report, $role, $upload) {
     $result = $result = $result . button("Visualizza", "$base&action=look", "primary");
 
     if ($role == 'patient') {
-        $result = $result . button("Condividi", "$base&action=share", "primary");
+        $result = $result . button("Condivisione", "$base&action=share", "primary");
     }
 
     if ($role == 'operator' && $_SESSION['UID'] == $report['OID']) {
@@ -171,6 +171,33 @@ function select_operator($oid, $rid, $type) {
     $query = "SELECT Operatore.ID, Nome, Cognome, Denominazione FROM Operatore
     INNER JOIN Struttura ON Operatore.FID = Struttura.ID
     WHERE Operatore.ID NOT IN ($exclude)";
+    $result = "<select name='operatore' class='form-control'>";
+    $result = $result . "<option value='-1'> </option>";
+    $set = query($query);
+    while($row = mysql_fetch_array($set)) {
+        $id = $row['ID'];
+        $nome = $row['Nome'];
+        $cognome = $row['Cognome'];
+        $struttura = $row['Denominazione'];
+        $result = $result . "<option value='$id'> $nome $cognome ($struttura) </option>";
+    }
+    return $result . "</select>";
+}
+
+function select_shared($rid, $type) {
+    $pid = $_SESSION['UID'];
+
+    if ($type == 'report') {
+        $query = "SELECT Operatore.ID, Nome, Cognome, Denominazione FROM Operatore
+        INNER JOIN Struttura ON Operatore.FID = Struttura.ID
+        INNER JOIN lettura_referto ON Operatore.ID = lettura_referto.OID
+        WHERE lettura_referto.RID = $rid";
+    } else {
+        $query = "SELECT Operatore.ID, Nome, Cognome, Denominazione FROM Operatore
+        INNER JOIN Struttura ON Operatore.FID = Struttura.ID
+        INNER JOIN lettura_paziente ON Operatore.ID = lettura_paziente.OID
+        WHERE lettura_paziente.PID = $pid";
+    }
     $result = "<select name='operatore' class='form-control'>";
     $result = $result . "<option value='-1'> </option>";
     $set = query($query);
@@ -295,17 +322,24 @@ function deleter($rid) {
 
 function sharer($oid, $rid, $type) {
     if ($type == 'report') {
-        $link = "share.php?rid=$rid";
+        $link = "share.php?rid=$rid&";
     } elseif ($type == 'patient') {
         $link = "share.php?";
     } else {
         return "";
     }
+    $del = $link . 'flag=delete';
     $operatori = select_operator($oid, $rid, $type);
+    $shared = select_shared($rid, $type);
     $result = "<table class='table table-borderless'> <form method='post' enctype='multipart/form-data' action='$link'>";
     $result = $result .  "<tr> <td> Seleziona operatore: </td>";
     $result = $result .  "<td> $operatori </td>";
     $result = $result .  "<td> <input type='submit' class='form-control btn btn-primary' name='submit' value='Condividi'> </td> </tr>";
+    $result = $result . "</form> </table>";
+    $result = $result .  "<table class='table table-borderless'> <form method='post' enctype='multipart/form-data' action='$del'>";
+    $result = $result .  "<tr> <td> Seleziona operatore: </td>";
+    $result = $result .  "<td> $shared </td>";
+    $result = $result .  "<td> <input type='submit' class='form-control btn btn-danger' name='submit' value='Rimuovi'> </td> </tr>";
     $result = $result . "</form> </table>";
     return $result;
 }

@@ -38,11 +38,36 @@
             die();
         }
 
+        if(@$_GET['flag'] == 'delete') {
+            query("DELETE FROM lettura_referto
+            WHERE OID = $operatore AND RID = $value");
+            header('Location: referti.php');
+            die();
+        }
+
     } else {
         $value = $id;
         $table = 'lettura_paziente';
+
+        if(@$_GET['flag'] == 'delete') {
+            query("DELETE FROM lettura_paziente
+            WHERE OID = $operatore AND PID = $value");
+            header('Location: referti.php');
+            die();
+        }
         
-        query("DELETE FROM lettura_referto WHERE OID = $operatore");
+        $set = query("SELECT ID FROM Referto
+        INNER JOIN lettura_referto ON Referto.ID = lettura_referto.RID
+        WHERE Referto.PID = $value");
+
+        $rid = "-1";
+        while($row = mysql_fetch_array($set)) {
+            $info = $row['ID'];
+            $rid =  $rid . ", $info";
+        }
+
+        query("DELETE FROM lettura_referto WHERE OID = $operatore AND
+        RID IN ($rid)");
     }
 
     query("INSERT INTO $table VALUES ($value, $operatore)");
