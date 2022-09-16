@@ -64,4 +64,4 @@ La Struttura invece si occupa di gestire i propri operatori e deve poter:
 
 ## Installazione
 Se si vuole installare localmente o su un proprio server la piattaforma è necessario che siano installati un Server HTTP con PHP abilitato a ricevere file caricati dall'utente, e una istanza MySQL
-con un database chiamato "my_enricociciriello" con user "enricociciriello" e password vuota.
+con un database chiamato "my_enricociciriello" con user "enricociciriello" e password vuota. Infine si deve importare il database (con elementi di prova) presente dentro la cartella [sql](sql/my_enricociciriello.sql).
