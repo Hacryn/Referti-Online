@@ -93,6 +93,8 @@ function actions($report, $role, $upload) {
     if ($role == 'operator' && $_SESSION['UID'] == $report['OID']) {
         if ($report['Filepath'] == NULL or $upload) {
             $result = $result . button("Carica", "$base&action=upload", "primary");
+        } else {
+            $result = $result . button("Carica", "$base&action=upload", "secondary");
         }
         $result = $result . button("Modifica", "$base&action=edit", "primary");
         $result = $result . button("Elimina", "$base&action=delete", "danger");

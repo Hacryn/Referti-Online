@@ -98,7 +98,7 @@ Nella pagina di caricamento verrà chiesto di selezionare il file che si vorrà 
 
 ![Carica Referto - 3](img/15.png)
 
-> Ricorda: può sempre modificare il file caricato sulla piattaforma visualizzando il referto o modificandolo. Tuttavia non è possibile farlo dalla lista dei referti.
+> Ricorda: può sempre modificare il file caricato sulla piattaforma visualizzando il referto o modificandolo.
 
 ### Modifica di un referto
 
