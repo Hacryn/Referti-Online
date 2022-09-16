@@ -81,7 +81,10 @@ function actions($report, $role, $upload) {
     $base = "referto.php?rid=$rid";
     $filepath = $report['Filepath'];
     $result = "<table class='table table-borderless' style='background-color: transparent'> <tr>";
-    $result = $result = $result . button("Visualizza", "$base&action=look", "primary");
+    
+    if (!$upload) {
+        $result = $result = $result . button("Visualizza", "$base&action=look", "primary");
+    }
 
     if ($role == 'patient') {
         $result = $result . button("Condivisione", "$base&action=share", "primary");
