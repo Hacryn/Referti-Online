@@ -25,7 +25,7 @@
 <?php
     function operator_action($text, $link) {
         $result = "<input class='btn btn-primary space'type='submit' name='go' value='$text'>";
-        $result = $result . "<input class='btn btn-secondary space'type='submit' name='go' value='Pulisci'>";
+        $result = $result . "<input class='btn btn-secondary space' type='reset' name='go' value='Pulisci'>";
         if ($link) {
             $result = $result . "<a class='btn btn-danger space' href='$link'>Elimina</a>";
         }
