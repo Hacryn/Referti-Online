@@ -24,15 +24,15 @@
     $cognome = $_POST['cognome'];
     $password = $_POST['password'];
 
-    if (strlen($cf) != 16 and !@$_GET['flag'] = 'delete') {
+    if (strlen($cf) != 16) {
         header('Location: operatori.php?result=nocf');
         die();
     }
 
     if (@$_GET['flag'] = 'delete' and @$_GET['id']) {
-        $oid = $_GET['id'];
+        /*$oid = $_GET['id'];
         $query = "DELETE FROM Operatore
-        WHERE ID = $oid AND FID = $id";
+        WHERE ID = $oid AND FID = $id";*/
     } elseif (@$_GET['id']) {
         $oid = $_GET['id'];
         if ($password == '') {
