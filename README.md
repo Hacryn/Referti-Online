@@ -18,7 +18,7 @@ Il Paziente deve poter:
 - Consultare un referto come utente registrato
 - Scaricare il referto
 - Condividere un singolo referto con un medico
-- Condividere tutti i referti (presenti e passati) con il proprio medico di fiducia
+- Condividere tutti i referti (presenti e futuri) con il proprio medico di fiducia
 
 L'Operatore, che può essere l'operatore che esegue l'esame diagnostico o un medico curante/specialista, deve poter:
 - Registrare l'esame svolto
@@ -32,11 +32,13 @@ La Struttura invece si occupa di gestire i propri operatori e deve poter:
 ## Funzioni implementate
 
 ### Paziente:
-- Può registrarsi alla piattaforma inserendo Nome, Cognome, Codice Fiscale e una password.
+- Può registrarsi alla piattaforma inserendo Nome, Cognome, Codice Fiscale e una password (inoltre se sono presenti dei referti precedenti alla registrazione questi vengono connessi all'account automaticamente).
 - Può accedere alla piattaforma inserendo il Codice Fiscale e la sua password.
 - Può consultare un referto senza avere un account inserendo il codice referto e il codice d'accesso per il referto comunicato dall'operatore.
 - Può dare il consenso per condividere un referto con un operatore.
+- Può revocare il consenso per la condivisione di un singolo referto con un operatore.
 - Può dare il consenso per condividere tutti i referti con un operatore.
+- Può revocare il consenso per la condivisione di tutti i referti con un operatore.
 - Può visualizzare le informazioni di un referto.
 - Può scaricare i file caricati dall'operatore di un referto.
 
@@ -55,8 +57,11 @@ La Struttura invece si occupa di gestire i propri operatori e deve poter:
 - Può modificare Nome, Cognome, Codice Fiscale e password di un suo Operatore.
 - Può visualizzare i referti realizzati dai suoi Operatori.
 
-Documentazione del progetto:
+## Documentazione del progetto:
 - [Diagramma ER](doc/er.md)
 - [Relazione tecnica](doc/relazione.md)
 - [Manuale Utente](doc/manuale.md)
 
+## Installazione
+Se si vuole installare localmente o su un proprio server la piattaforma è necessario che siano installati un Server HTTP con PHP abilitato a ricevere file caricati dall'utente, e una istanza MySQL
+con un database chiamato "my_enricociciriello" con user "enricociciriello" e password vuota.
