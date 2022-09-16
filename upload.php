@@ -30,7 +30,7 @@
     $pid = $pid['PID'];
 
     $basename = basename($_FILES['report']['name']);
-    $filename = hash('sha256', $basename);
+    $filename = hash('sha256', $basename . time());
     $ext = strtolower(pathinfo($basename, PATHINFO_EXTENSION));
     $target = "files/$pid/$filename.$ext";
 
