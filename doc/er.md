@@ -1,5 +1,5 @@
 # Diagramma ER
-![Diagramma ER di Referti Online](ERDDiagram.jpg)
+![Diagramma ER di Referti Online](img/ERDDiagram.jpg)
 
 ## Legenda 
 - PK: Chiave primaria
